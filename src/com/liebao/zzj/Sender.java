@@ -11,16 +11,14 @@ public class Sender implements Runnable {
 	DataOutputStream dos;
 	int msgcount = 0;
 	String msg;
-	//Reciever reciever;
 	
 	public Sender(Socket client){
 		this.client = client;
-		//reciever = new Reciever();
 	}
 
 	@Override
 	public void run() {
-		while(client.isConnected()){
+		while(client.isConnected()&&client.isBound()){
 			if(msgcount < MessageBean.getMssagecount()){
 				try {
 					System.out.println("Sender:"+MessageBean.getMssagecount()+" msg:"+MessageBean.getMessagestr());
@@ -31,17 +29,16 @@ public class Sender implements Runnable {
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}/*finally{
-					try {
-						dos.close();
-						//client.shutdownOutput();
-						//client.close();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}*/
+				}
 			}
+		}
+		try {
+			dos.close();
+			client.shutdownOutput();
+			client.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
