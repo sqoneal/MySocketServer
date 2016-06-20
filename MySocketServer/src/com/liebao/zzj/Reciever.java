@@ -8,39 +8,48 @@ class Reciever implements Runnable {
 	Socket client;
 	// InputStream is;
 	// BufferedInputStream bis;
-	String strmessage;
+	public String strmessage;
+	//public static int msgcount = 0;
 
 	DataInputStream dis;
+	
+	public Reciever() {
+	}
 
 	public Reciever(Socket client) {
 		this.client = client;
 	}
 
 	@Override
-	public synchronized void run() {
+	public void run() {
 		while (client.isConnected()) {
 			try {
-				dis = new DataInputStream(client.getInputStream());
+				if(!client.isClosed()){
+					dis = new DataInputStream(client.getInputStream());
 
-				while ((strmessage = dis.readUTF()) != null) {
-					System.out.println(strmessage);
+					while ((strmessage = dis.readUTF()) != null) {
+						System.out.println(strmessage);
+						MessageBean.setMessagestr(strmessage);
+						MessageBean.setMssagecount(MessageBean.getMssagecount()+1);
+						System.out.println("Reciever:msgcount:"+MessageBean.getMssagecount());
+					}
 				}
 				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} finally {
+			} /*finally {
 				try {
 					// bis.close();
 					// is.close();
-					client.shutdownInput();
-					dis.close();
-					client.close();
+					//client.shutdownInput();
+					//dis.close();
+					//client.close();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			}
+			}*/
 		}
 	}
 

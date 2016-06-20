@@ -26,6 +26,9 @@ class ServiceConn {
 				System.out.println("*********等待客户端连接**********");
 				Socket clientsocket = serversocket.accept();
 				servicepool.execute(new Reciever(clientsocket));
+				servicepool.execute(new Sender(clientsocket));
+				/*new Thread(new Reciever(clientsocket)).start();
+				new Thread(new Sender(clientsocket)).start();*/
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
