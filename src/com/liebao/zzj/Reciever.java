@@ -20,21 +20,29 @@ class Reciever implements Runnable {
 
 	@Override
 	public void run() {
-		while (client.isConnected()&&client.isBound()) {
-			try {
-				if (!client.isClosed()) {
-					dis = new DataInputStream(client.getInputStream());
-					while ((strmessage = dis.readUTF()) != null) {
-						System.out.println(strmessage);
-						MessageBean.setMessagestr(strmessage);
-						MessageBean.setMssagecount(MessageBean.getMssagecount() + 1);
-						System.out.println("Reciever:msgcount:" + MessageBean.getMssagecount());
-					}
-				}
 
+		while (client.isConnected()) {
+			if (client.isClosed())
+				break;
+			try {
+				dis = new DataInputStream(client.getInputStream());
+				while ((strmessage = dis.readUTF()) != null) {
+					if (strmessage.equals(""))
+						break;
+					System.out.println(strmessage);
+					MessageBean.setMessagestr(strmessage);
+					MessageBean.setMssagecount(MessageBean.getMssagecount() + 1);
+					System.out.println("Reciever:msgcount:" + MessageBean.getMssagecount());
+				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				try {
+					dis.close();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		}
 
@@ -45,7 +53,6 @@ class Reciever implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 }
